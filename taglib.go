@@ -1,7 +1,6 @@
 // Go wrapper for taglib
 
 // Generate stringer method for types
-//go:generate stringer -type=TagName
 
 package taglib
 
@@ -13,27 +12,9 @@ import "C"
 
 import (
 	"errors"
-	"strconv"
 	"sync"
 	"time"
 	"unsafe"
-)
-
-type TagName int
-
-// Tag names
-const (
-	Album      TagName = iota
-	Artist
-	Bitrate
-	Channels
-	Comments
-	Genre
-	Length
-	Samplerate
-	Title
-	Track
-	Year
 )
 
 var (
@@ -44,61 +25,6 @@ var (
 func init() {
 	// Make everything utf-8
 	C.taglib_id3v2_set_default_text_encoding(3)
-}
-
-// Returns a string with this tag's comment.
-func (file *File) Tag(tagname TagName) (tagvalue string) {
-	switch tagname {
-	case Album:
-		return file.Album()
-	case Artist:
-		return file.Artist()
-	case Bitrate:
-		return strconv.Itoa(file.Bitrate())
-	case Channels:
-		return strconv.Itoa(file.Channels())
-	case Comments:
-		return file.Comment()
-	case Genre:
-		return file.Genre()
-	case Length:
-		return file.Length().String()
-	case Samplerate:
-		return strconv.Itoa(file.Samplerate())
-	case Title:
-		return file.Title()
-	case Track:
-		return strconv.Itoa(file.Track())
-	case Year:
-		return strconv.Itoa(file.Year())
-	}
-	return ""
-}
-
-// Sets the tag.
-func (file *File) SetTag(tagname TagName, tagvalue string) {
-	switch tagname {
-	case Album:
-		file.SetAlbum(tagvalue)
-	case Artist:
-		file.SetArtist(tagvalue)
-	case Comments:
-		file.SetComment(tagvalue)
-	case Genre:
-		file.SetGenre(tagvalue)
-	case Title:
-		file.SetTitle(tagvalue)
-	case Track:
-		intValue, convErr := strconv.Atoi(tagvalue)
-		if convErr == nil {
-			file.SetTrack(intValue)
-		}
-	case Year:
-		intValue, convErr := strconv.Atoi(tagvalue)
-		if convErr == nil {
-			file.SetYear(intValue)
-		}
-	}
 }
 
 type File struct {
