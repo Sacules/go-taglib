@@ -24,6 +24,9 @@ func init() {
 
 type File struct {
 	sync.Mutex
+	Filename string
+
+	// C API
 	fp    *C.TagLib_File
 	tag   *C.TagLib_Tag
 	props *C.TagLib_AudioProperties
@@ -45,9 +48,10 @@ func Read(filename string) (*File, error) {
 	}
 
 	return &File{
-		fp:    fp,
-		tag:   C.taglib_file_tag(fp),
-		props: C.taglib_file_audioproperties(fp),
+		Filename: filename,
+		fp:       fp,
+		tag:      C.taglib_file_tag(fp),
+		props:    C.taglib_file_audioproperties(fp),
 	}, nil
 }
 
@@ -186,7 +190,6 @@ func (file *File) SetTitle(s string) {
 	cs := GetCCharPointer(s)
 	defer C.free(unsafe.Pointer(cs))
 	C.taglib_tag_set_title(file.tag, cs)
-
 }
 
 // Sets the tag's artist.
