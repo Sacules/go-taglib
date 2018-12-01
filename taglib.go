@@ -17,34 +17,31 @@ import (
 	"unsafe"
 )
 
-var (
-	ErrInvalid = errors.New("invalid file")
-	glock      = sync.Mutex{}
-)
-
 func init() {
 	// Make everything utf-8
 	C.taglib_id3v2_set_default_text_encoding(3)
 }
 
 type File struct {
+	sync.Mutex
 	fp    *C.TagLib_File
 	tag   *C.TagLib_Tag
 	props *C.TagLib_AudioProperties
 }
 
-// Reads and parses a music file. Returns an error if the provided filename is
+// Read and parses a music file. Returns an error if the provided filename is
 // not a valid file.
 func Read(filename string) (*File, error) {
-	glock.Lock()
-	defer glock.Unlock()
+	m := &sync.Mutex{}
+	m.Lock()
+	defer m.Unlock()
 
 	cs := C.CString(filename)
 	defer C.free(unsafe.Pointer(cs))
 
 	fp := C.taglib_file_new(cs)
 	if fp == nil || C.taglib_file_is_valid(fp) == 0 {
-		return nil, ErrInvalid
+		return nil, errors.New("invalid file")
 	}
 
 	return &File{
@@ -56,8 +53,8 @@ func Read(filename string) (*File, error) {
 
 // Close and free the file.
 func (file *File) Close() {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	C.taglib_file_free(file.fp)
 	file.fp = nil
@@ -76,64 +73,64 @@ func convertAndFree(cs *C.char) string {
 
 // Returns a string with this tag's title.
 func (file *File) Title() string {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return convertAndFree(C.taglib_tag_title(file.tag))
 }
 
 // Returns a string with this tag's artist.
 func (file *File) Artist() string {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return convertAndFree(C.taglib_tag_artist(file.tag))
 }
 
 // Returns a string with this tag's album name.
 func (file *File) Album() string {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return convertAndFree(C.taglib_tag_album(file.tag))
 }
 
 // Returns a string with this tag's comment.
 func (file *File) Comment() string {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return convertAndFree(C.taglib_tag_comment(file.tag))
 }
 
 // Returns a string with this tag's genre.
 func (file *File) Genre() string {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return convertAndFree(C.taglib_tag_genre(file.tag))
 }
 
 // Returns the tag's year or 0 if year is not set.
 func (file *File) Year() int {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return int(C.taglib_tag_year(file.tag))
 }
 
 // Returns the tag's track number or 0 if track number is not set.
 func (file *File) Track() int {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return int(C.taglib_tag_track(file.tag))
 }
 
 // Returns the length of the file.
 func (file *File) Length() time.Duration {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	length := C.taglib_audioproperties_length(file.props)
 	return time.Duration(length) * time.Second
@@ -141,31 +138,32 @@ func (file *File) Length() time.Duration {
 
 // Returns the bitrate of the file in kb/s.
 func (file *File) Bitrate() int {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return int(C.taglib_audioproperties_bitrate(file.props))
 }
 
 // Returns the sample rate of the file in Hz.
 func (file *File) Samplerate() int {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return int(C.taglib_audioproperties_samplerate(file.props))
 }
 
 // Returns the number of channels in the audio stream.
 func (file *File) Channels() int {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 
 	return int(C.taglib_audioproperties_channels(file.props))
 }
 
 func init() {
-	glock.Lock()
-	defer glock.Unlock()
+	m := &sync.Mutex{}
+	m.Lock()
+	defer m.Unlock()
 
 	C.taglib_set_string_management_enabled(0)
 }
@@ -173,8 +171,8 @@ func init() {
 // Saves the \a file to disk.
 func (file *File) Save() error {
 	var err error
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 	if C.taglib_file_save(file.fp) != 1 {
 		err = errors.New("Cannot save file")
 	}
@@ -183,8 +181,8 @@ func (file *File) Save() error {
 
 // Sets the tag's title.
 func (file *File) SetTitle(s string) {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 	cs := GetCCharPointer(s)
 	defer C.free(unsafe.Pointer(cs))
 	C.taglib_tag_set_title(file.tag, cs)
@@ -193,8 +191,8 @@ func (file *File) SetTitle(s string) {
 
 // Sets the tag's artist.
 func (file *File) SetArtist(s string) {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 	cs := GetCCharPointer(s)
 	defer C.free(unsafe.Pointer(cs))
 	C.taglib_tag_set_artist(file.tag, cs)
@@ -202,8 +200,8 @@ func (file *File) SetArtist(s string) {
 
 // Sets the tag's album.
 func (file *File) SetAlbum(s string) {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 	cs := GetCCharPointer(s)
 	defer C.free(unsafe.Pointer(cs))
 	C.taglib_tag_set_album(file.tag, cs)
@@ -211,8 +209,8 @@ func (file *File) SetAlbum(s string) {
 
 // Sets the tag's comment.
 func (file *File) SetComment(s string) {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 	cs := GetCCharPointer(s)
 	defer C.free(unsafe.Pointer(cs))
 	C.taglib_tag_set_comment(file.tag, cs)
@@ -220,8 +218,8 @@ func (file *File) SetComment(s string) {
 
 // Sets the tag's genre.
 func (file *File) SetGenre(s string) {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 	cs := GetCCharPointer(s)
 	defer C.free(unsafe.Pointer(cs))
 	C.taglib_tag_set_genre(file.tag, cs)
@@ -229,16 +227,16 @@ func (file *File) SetGenre(s string) {
 
 // Sets the tag's year.  0 indicates that this field should be cleared.
 func (file *File) SetYear(i int) {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 	ci := C.uint(i)
 	C.taglib_tag_set_year(file.tag, ci)
 }
 
 // Sets the tag's track number.  0 indicates that this field should be cleared.
 func (file *File) SetTrack(i int) {
-	glock.Lock()
-	defer glock.Unlock()
+	file.Lock()
+	defer file.Unlock()
 	ci := C.uint(i)
 	C.taglib_tag_set_track(file.tag, ci)
 }
