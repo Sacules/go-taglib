@@ -172,6 +172,7 @@ func TestWriteTagLib(t *testing.T) {
 func TestGenericWriteTagLib(t *testing.T) {
 	fileName := "test.mp3"
 	file, err := Read(fileName)
+	defer file.Close()
 
 	if err != nil {
 		t.Fatalf("Read returned error: %s", err)
@@ -184,7 +185,6 @@ func TestGenericWriteTagLib(t *testing.T) {
 
 	tempFileName := path.Join(tempDir, "go-taglib-test.mp3")
 
-	defer file.Close()
 	defer os.RemoveAll(tempDir)
 
 	err = cp(tempFileName, fileName)
@@ -259,12 +259,12 @@ func getModifiedInt(i int) int {
 
 func cp(dst, src string) error {
 	s, err := os.Open(src)
+	defer s.Close()
 	if err != nil {
 		return err
 	}
 	// no need to check errors on read only file, we already got everything
 	// we need from the filesystem, so nothing can go wrong now.
-	defer s.Close()
 	d, err := os.Create(dst)
 	if err != nil {
 		return err
