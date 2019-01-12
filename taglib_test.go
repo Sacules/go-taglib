@@ -39,7 +39,6 @@ func TestTagLib(t *testing.T) {
 	defer file.Close()
 
 	if err != nil {
-		panic(err)
 		t.Fatalf("Read returned error: %s", err)
 	}
 
