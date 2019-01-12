@@ -17,12 +17,8 @@ func TestReadNothing(t *testing.T) {
 		t.Fatal("Returned non nil file struct.")
 	}
 
-	if err == nil {
-		t.Fatal("Returned nil err.")
-	}
-
-	if err != ErrInvalid {
-		t.Fatal("Didn't return ErrInvalid")
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -35,10 +31,6 @@ func TestReadDirectory(t *testing.T) {
 
 	if err == nil {
 		t.Fatal("Returned nil err.")
-	}
-
-	if err != ErrInvalid {
-		t.Fatal("Didn't return ErrInvalid")
 	}
 }
 
