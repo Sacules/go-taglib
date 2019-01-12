@@ -92,35 +92,32 @@ func TestTagLib(t *testing.T) {
 func TestWriteTagLib(t *testing.T) {
 	fileName := "test.mp3"
 	file, err := Read(fileName)
+	defer file.Close()
 
 	if err != nil {
-		panic(err)
 		t.Fatalf("Read returned error: %s", err)
 	}
 	tempDir, err := ioutil.TempDir("", "go-taglib-test")
 
 	if err != nil {
-		panic(err)
 		t.Fatalf("Cannot create temporary file for writing tests: %s", err)
 	}
 
 	tempFileName := path.Join(tempDir, "go-taglib-test.mp3")
 
-	defer file.Close()
 	defer os.RemoveAll(tempDir)
 
 	err = cp(tempFileName, fileName)
 
 	if err != nil {
-		panic(err)
 		t.Fatalf("Cannot copy file for writing tests: %s", err)
 	}
 
 	modifiedFile, err := Read(tempFileName)
 	if err != nil {
-		panic(err)
 		t.Fatalf("Read returned error: %s", err)
 	}
+
 	modifiedFile.SetAlbum(getModifiedString(file.Album()))
 	modifiedFile.SetComment(getModifiedString(file.Comment()))
 	modifiedFile.SetGenre(getModifiedString(file.Genre()))
@@ -128,16 +125,17 @@ func TestWriteTagLib(t *testing.T) {
 	modifiedFile.SetYear(file.Year() + 1)
 	modifiedFile.SetArtist(getModifiedString(file.Artist()))
 	modifiedFile.SetTitle(getModifiedString(file.Title()))
+
 	err = modifiedFile.Save()
 	if err != nil {
-		panic(err)
 		t.Fatalf("Cannot save file : %s", err)
 	}
+
 	modifiedFile.Close()
+
 	//Re-open the modified file
 	modifiedFile, err = Read(tempFileName)
 	if err != nil {
-		panic(err)
 		t.Fatalf("Read returned error: %s", err)
 	}
 
@@ -176,13 +174,11 @@ func TestGenericWriteTagLib(t *testing.T) {
 	file, err := Read(fileName)
 
 	if err != nil {
-		panic(err)
 		t.Fatalf("Read returned error: %s", err)
 	}
 	tempDir, err := ioutil.TempDir("", "go-taglib-test")
 
 	if err != nil {
-		panic(err)
 		t.Fatalf("Cannot create temporary file for writing tests: %s", err)
 	}
 
@@ -194,13 +190,11 @@ func TestGenericWriteTagLib(t *testing.T) {
 	err = cp(tempFileName, fileName)
 
 	if err != nil {
-		panic(err)
 		t.Fatalf("Cannot copy file for writing tests: %s", err)
 	}
 
 	modifiedFile, err := Read(tempFileName)
 	if err != nil {
-		panic(err)
 		t.Fatalf("Read returned error: %s", err)
 	}
 	modifiedFile.SetTag(Album, getModifiedString(file.Album()))
@@ -212,14 +206,12 @@ func TestGenericWriteTagLib(t *testing.T) {
 	modifiedFile.SetTag(Title, getModifiedString(file.Title()))
 	err = modifiedFile.Save()
 	if err != nil {
-		panic(err)
 		t.Fatalf("Cannot save file : %s", err)
 	}
 	modifiedFile.Close()
 	//Re-open the modified file
 	modifiedFile, err = Read(tempFileName)
 	if err != nil {
-		panic(err)
 		t.Fatalf("Read returned error: %s", err)
 	}
 
