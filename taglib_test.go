@@ -236,11 +236,11 @@ func TestGenericWriteTagLib(t *testing.T) {
 	}
 
 	if year := modifiedFile.Year(); year != getModifiedInt(1942) {
-		t.Errorf("Got wrong modified year: %s", year)
+		t.Errorf("Got wrong modified year: %d", year)
 	}
 
 	if track := modifiedFile.Track(); track != getModifiedInt(42) {
-		t.Errorf("Got wrong modified track: %s", track)
+		t.Errorf("Got wrong modified track: %d", track)
 	}
 }
 
