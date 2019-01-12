@@ -2,11 +2,9 @@ go-taglib
 =========
 
 Go wrapper for [taglib](http://taglib.github.com/)
-[![Build Status](https://travis-ci.org/wtolson/go-taglib.png)](https://travis-ci.org/wtolson/go-taglib)
 
-Dependencies
-------------
 
+## Dependencies
 You must have the static [taglib](http://taglib.github.com/) libraries installed
 in order to compile go-taglib.
 
@@ -18,12 +16,11 @@ in order to compile go-taglib.
 
     sudo apt-get install libtagc0-dev
 
-Install
--------
+## Install
 
-    go get github.com/wtolson/go-taglib
+    go get github.com/Sacules/go-taglib
 
 Documentation
 -------------
 
-Checkout the documentation at http://godoc.org/github.com/wtolson/go-taglib
+Checkout the documentation at http://godoc.org/github.com/Sacules/go-taglib
