@@ -36,13 +36,12 @@ func TestReadDirectory(t *testing.T) {
 
 func TestTagLib(t *testing.T) {
 	file, err := Read("test.mp3")
+	defer file.Close()
 
 	if err != nil {
 		panic(err)
 		t.Fatalf("Read returned error: %s", err)
 	}
-
-	defer file.Close()
 
 	// Test the Tags
 	if title := file.Title(); title != "The Title" {
