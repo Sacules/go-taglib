@@ -17,8 +17,8 @@ func TestReadNothing(t *testing.T) {
 		t.Fatal("Returned non nil file struct.")
 	}
 
-	if err != nil {
-		t.Fatal(err)
+	if err == nil {
+		t.Fatal("Returned nil err")
 	}
 }
 
