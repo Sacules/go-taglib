@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"strconv"
 	"testing"
 	"time"
 )
@@ -197,13 +196,13 @@ func TestGenericWriteTagLib(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Read returned error: %s", err)
 	}
-	modifiedFile.SetTag(Album, getModifiedString(file.Album()))
-	modifiedFile.SetTag(Comments, getModifiedString(file.Comment()))
-	modifiedFile.SetTag(Genre, getModifiedString(file.Genre()))
-	modifiedFile.SetTag(Track, strconv.Itoa(file.Track()+1))
-	modifiedFile.SetTag(Year, strconv.Itoa(file.Year()+1))
-	modifiedFile.SetTag(Artist, getModifiedString(file.Artist()))
-	modifiedFile.SetTag(Title, getModifiedString(file.Title()))
+	modifiedFile.SetAlbum(getModifiedString(file.Album()))
+	modifiedFile.SetComment(getModifiedString(file.Comment()))
+	modifiedFile.SetGenre(getModifiedString(file.Genre()))
+	modifiedFile.SetTrack(file.Track() + 1)
+	modifiedFile.SetYear(file.Year() + 1)
+	modifiedFile.SetArtist(getModifiedString(file.Artist()))
+	modifiedFile.SetTitle(getModifiedString(file.Title()))
 	err = modifiedFile.Save()
 	if err != nil {
 		t.Fatalf("Cannot save file : %s", err)
@@ -216,31 +215,31 @@ func TestGenericWriteTagLib(t *testing.T) {
 	}
 
 	// Test the Tags
-	if title := modifiedFile.Tag(Title); title != getModifiedString("The Title") {
+	if title := modifiedFile.Title(); title != getModifiedString("The Title") {
 		t.Errorf("Got wrong modified title: %s", title)
 	}
 
-	if artist := modifiedFile.Tag(Artist); artist != getModifiedString("The Artist") {
+	if artist := modifiedFile.Artist(); artist != getModifiedString("The Artist") {
 		t.Errorf("Got wrong modified artist: %s", artist)
 	}
 
-	if album := modifiedFile.Tag(Album); album != getModifiedString("The Album") {
+	if album := modifiedFile.Album(); album != getModifiedString("The Album") {
 		t.Errorf("Got wrong modified album: %s", album)
 	}
 
-	if comment := modifiedFile.Tag(Comments); comment != getModifiedString("A Comment") {
+	if comment := modifiedFile.Comment(); comment != getModifiedString("A Comment") {
 		t.Errorf("Got wrong modified comment: %s", comment)
 	}
 
-	if genre := modifiedFile.Tag(Genre); genre != getModifiedString("Booty Bass") {
+	if genre := modifiedFile.Genre(); genre != getModifiedString("Booty Bass") {
 		t.Errorf("Got wrong modified genre: %s", genre)
 	}
 
-	if year := modifiedFile.Tag(Year); year != strconv.Itoa(getModifiedInt((1942))) {
+	if year := modifiedFile.Year(); year != getModifiedInt(1942) {
 		t.Errorf("Got wrong modified year: %s", year)
 	}
 
-	if track := modifiedFile.Tag(Track); track != strconv.Itoa(getModifiedInt((42))) {
+	if track := modifiedFile.Track(); track != getModifiedInt(42) {
 		t.Errorf("Got wrong modified track: %s", track)
 	}
 }
