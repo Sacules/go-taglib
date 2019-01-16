@@ -145,6 +145,61 @@ func TestTagLibOGG(t *testing.T) {
 	}
 }
 
+func TestTagLibFLAC(t *testing.T) {
+	// FLAC
+	fileflac, err := Read("test.flac")
+	defer fileflac.Close()
+
+	if err != nil {
+		t.Fatalf("Read returned error: %s", err)
+	}
+
+	// Test the Tags
+	if title := fileflac.Title(); title != "Free Software Song" {
+		t.Errorf("Got wrong title: %s", title)
+	}
+
+	if artist := fileflac.Artist(); artist != "Mark Forry, Yvette Osborne, Ron Fox, Steve Finney, Bill Cope, Kip McAtee, Ernie Provencher, Dan Auvil" {
+		t.Errorf("Got wrong artist: %s", artist)
+	}
+
+	if album := fileflac.Album(); album != "Freedom" {
+		t.Errorf("Got wrong album: %s", album)
+	}
+
+	if comment := fileflac.Comment(); comment != "" {
+		t.Errorf("Got wrong comment: %s", comment)
+	}
+
+	if genre := fileflac.Genre(); genre != "Ethnic" {
+		t.Errorf("Got wrong genre: %s", genre)
+	}
+
+	if year := fileflac.Year(); year != 2009 {
+		t.Errorf("Got wrong year: %d", year)
+	}
+
+	if track := fileflac.Track(); track != 1 {
+		t.Errorf("Got wrong track: %d", track)
+	}
+
+	// Test the properties
+	if length := fileflac.Length(); length != 10*time.Second {
+		t.Errorf("Got wrong length: %s", length)
+	}
+
+	if bitrate := fileflac.Bitrate(); bitrate != 816 {
+		t.Errorf("Got wrong bitrate: %d", bitrate)
+	}
+
+	if samplerate := fileflac.Samplerate(); samplerate != 44100 {
+		t.Errorf("Got wrong samplerate: %d", samplerate)
+	}
+
+	if channels := fileflac.Channels(); channels != 2 {
+		t.Errorf("Got wrong channels: %d", channels)
+	}
+}
 func TestWriteTagLib(t *testing.T) {
 	fileName := "test.mp3"
 	file, err := Read(fileName)
