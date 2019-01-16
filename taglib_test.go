@@ -215,11 +215,9 @@ func TestWriteTagLibMP3(t *testing.T) {
 	}
 
 	tempFileName := path.Join(tempDir, "go-taglib-test.mp3")
-
 	defer os.RemoveAll(tempDir)
 
 	err = cp(tempFileName, fileName)
-
 	if err != nil {
 		t.Fatalf("Cannot copy file for writing tests: %s", err)
 	}
@@ -276,6 +274,83 @@ func TestWriteTagLibMP3(t *testing.T) {
 	}
 
 	if track := modifiedFile.Track(); track != getModifiedInt(42) {
+		t.Errorf("Got wrong modified track: %d", track)
+	}
+}
+
+func TestWriteTagLibOGG(t *testing.T) {
+	fileName := "test.ogg"
+	file, err := Read(fileName)
+	defer file.Close()
+	if err != nil {
+		t.Fatalf("Read returned error: %s", err)
+	}
+
+	tempDir, err := ioutil.TempDir("", "go-taglib-test-OGG")
+	if err != nil {
+		t.Fatalf("Cannot create temporary file for writing tests: %s", err)
+	}
+
+	tempFileName := path.Join(tempDir, "go-taglib-test.ogg")
+	defer os.RemoveAll(tempDir)
+
+	err = cp(tempFileName, fileName)
+	if err != nil {
+		t.Fatalf("Cannot copy file for writing tests: %s", err)
+	}
+
+	modifiedFile, err := Read(tempFileName)
+	if err != nil {
+		t.Fatalf("Read returned error: %s", err)
+	}
+
+	modifiedFile.SetAlbum(getModifiedString(file.Album()))
+	modifiedFile.SetComment(getModifiedString(file.Comment()))
+	modifiedFile.SetGenre(getModifiedString(file.Genre()))
+	modifiedFile.SetTrack(file.Track() + 1)
+	modifiedFile.SetYear(file.Year() + 1)
+	modifiedFile.SetArtist(getModifiedString(file.Artist()))
+	modifiedFile.SetTitle(getModifiedString(file.Title()))
+
+	err = modifiedFile.Save()
+	if err != nil {
+		t.Fatalf("Cannot save file : %s", err)
+	}
+
+	modifiedFile.Close()
+
+	//Re-open the modified file
+	modifiedFile, err = Read(tempFileName)
+	if err != nil {
+		t.Fatalf("Read returned error: %s", err)
+	}
+
+	// Test the Tags
+	if title := modifiedFile.Title(); title != getModifiedString("Free Software Song") {
+		t.Errorf("Got wrong modified title: %s", title)
+	}
+
+	if artist := modifiedFile.Artist(); artist != getModifiedString("Mark Forry, Yvette Osborne, Ron Fox, Steve Finney, Bill Cope, Kip McAtee, Ernie Provencher, Dan Auvil") {
+		t.Errorf("Got wrong modified artist: %s", artist)
+	}
+
+	if album := modifiedFile.Album(); album != getModifiedString("Freedom") {
+		t.Errorf("Got wrong modified album: %s", album)
+	}
+
+	if comment := modifiedFile.Comment(); comment != getModifiedString("") {
+		t.Errorf("Got wrong modified comment: %s", comment)
+	}
+
+	if genre := modifiedFile.Genre(); genre != getModifiedString("Ethnic") {
+		t.Errorf("Got wrong modified genre: %s", genre)
+	}
+
+	if year := modifiedFile.Year(); year != getModifiedInt(2009) {
+		t.Errorf("Got wrong modified year: %d", year)
+	}
+
+	if track := modifiedFile.Track(); track != getModifiedInt(1) {
 		t.Errorf("Got wrong modified track: %d", track)
 	}
 }
