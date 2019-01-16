@@ -34,56 +34,113 @@ func TestReadDirectory(t *testing.T) {
 }
 
 func TestTagLib(t *testing.T) {
-	file, err := Read("test.mp3")
-	defer file.Close()
+	// MP3
+	filemp3, err := Read("test.mp3")
+	defer filemp3.Close()
 
 	if err != nil {
 		t.Fatalf("Read returned error: %s", err)
 	}
 
 	// Test the Tags
-	if title := file.Title(); title != "The Title" {
+	if title := filemp3.Title(); title != "The Title" {
 		t.Errorf("Got wrong title: %s", title)
 	}
 
-	if artist := file.Artist(); artist != "The Artist" {
+	if artist := filemp3.Artist(); artist != "The Artist" {
 		t.Errorf("Got wrong artist: %s", artist)
 	}
 
-	if album := file.Album(); album != "The Album" {
+	if album := filemp3.Album(); album != "The Album" {
 		t.Errorf("Got wrong album: %s", album)
 	}
 
-	if comment := file.Comment(); comment != "A Comment" {
+	if comment := filemp3.Comment(); comment != "A Comment" {
 		t.Errorf("Got wrong comment: %s", comment)
 	}
 
-	if genre := file.Genre(); genre != "Booty Bass" {
+	if genre := filemp3.Genre(); genre != "Booty Bass" {
 		t.Errorf("Got wrong genre: %s", genre)
 	}
 
-	if year := file.Year(); year != 1942 {
+	if year := filemp3.Year(); year != 1942 {
 		t.Errorf("Got wrong year: %d", year)
 	}
 
-	if track := file.Track(); track != 42 {
+	if track := filemp3.Track(); track != 42 {
 		t.Errorf("Got wrong track: %d", track)
 	}
 
 	// Test the properties
-	if length := file.Length(); length != 42*time.Second {
+	if length := filemp3.Length(); length != 42*time.Second {
 		t.Errorf("Got wrong length: %s", length)
 	}
 
-	if bitrate := file.Bitrate(); bitrate != 128 {
+	if bitrate := filemp3.Bitrate(); bitrate != 128 {
 		t.Errorf("Got wrong bitrate: %d", bitrate)
 	}
 
-	if samplerate := file.Samplerate(); samplerate != 44100 {
+	if samplerate := filemp3.Samplerate(); samplerate != 44100 {
 		t.Errorf("Got wrong samplerate: %d", samplerate)
 	}
 
-	if channels := file.Channels(); channels != 2 {
+	if channels := filemp3.Channels(); channels != 2 {
+		t.Errorf("Got wrong channels: %d", channels)
+	}
+}
+
+func TestTagLibOGG(t *testing.T) {
+	// OGG
+	fileogg, err := Read("test.ogg")
+	defer fileogg.Close()
+
+	if err != nil {
+		t.Fatalf("Read returned error: %s", err)
+	}
+
+	// Test the Tags
+	if title := fileogg.Title(); title != "Free Software Song" {
+		t.Errorf("Got wrong title: %s", title)
+	}
+
+	if artist := fileogg.Artist(); artist != "Mark Forry, Yvette Osborne, Ron Fox, Steve Finney, Bill Cope, Kip McAtee, Ernie Provencher, Dan Auvil" {
+		t.Errorf("Got wrong artist: %s", artist)
+	}
+
+	if album := fileogg.Album(); album != "Freedom" {
+		t.Errorf("Got wrong album: %s", album)
+	}
+
+	if comment := fileogg.Comment(); comment != "" {
+		t.Errorf("Got wrong comment: %s", comment)
+	}
+
+	if genre := fileogg.Genre(); genre != "Ethnic" {
+		t.Errorf("Got wrong genre: %s", genre)
+	}
+
+	if year := fileogg.Year(); year != 2009 {
+		t.Errorf("Got wrong year: %d", year)
+	}
+
+	if track := fileogg.Track(); track != 1 {
+		t.Errorf("Got wrong track: %d", track)
+	}
+
+	// Test the properties
+	if length := fileogg.Length(); length != 10*time.Second {
+		t.Errorf("Got wrong length: %s", length)
+	}
+
+	if bitrate := fileogg.Bitrate(); bitrate != 153 {
+		t.Errorf("Got wrong bitrate: %d", bitrate)
+	}
+
+	if samplerate := fileogg.Samplerate(); samplerate != 44100 {
+		t.Errorf("Got wrong samplerate: %d", samplerate)
+	}
+
+	if channels := fileogg.Channels(); channels != 2 {
 		t.Errorf("Got wrong channels: %d", channels)
 	}
 }
