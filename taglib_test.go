@@ -200,16 +200,16 @@ func TestTagLibFLAC(t *testing.T) {
 		t.Errorf("Got wrong channels: %d", channels)
 	}
 }
-func TestWriteTagLib(t *testing.T) {
+
+func TestWriteTagLibMP3(t *testing.T) {
 	fileName := "test.mp3"
 	file, err := Read(fileName)
 	defer file.Close()
-
 	if err != nil {
 		t.Fatalf("Read returned error: %s", err)
 	}
-	tempDir, err := ioutil.TempDir("", "go-taglib-test")
 
+	tempDir, err := ioutil.TempDir("", "go-taglib-test-MP3")
 	if err != nil {
 		t.Fatalf("Cannot create temporary file for writing tests: %s", err)
 	}
